@@ -1,0 +1,46 @@
+---
+description: Quy ước Backend — FastAPI, SQLAlchemy, auth, cấu trúc Python
+globs: backend/**/*.py
+alwaysApply: false
+---
+
+# Backend Rules (Python / FastAPI)
+
+## Cấu trúc thư mục
+
+- `app/` — application code
+- `app/api/` — route handlers (APIRouter), nhóm theo domain (auth, users, …)
+- `app/models/` — SQLAlchemy models
+- `app/schemas/` — Pydantic request/response
+- `app/services/` — business logic (auth, …), không đặt logic nặng trong route
+- `app/middleware/` — Starlette/FastAPI middleware
+- `alembic/` — migrations, không sửa tay file đã generate nếu không cần thiết
+
+## Code style
+
+- Dùng type hints cho function args và return.
+- Không dùng `any`; dùng `Optional[T]`, `Union`, hoặc type cụ thể.
+- Async: endpoint và service dùng `async def` khi gọi DB hoặc I/O.
+- Config: đọc từ `app/config.py` (pydantic-settings), không hardcode secret/URL.
+
+## API & Auth
+
+- Route public: chỉ `/api/auth/login`, `/api/auth/register` (và tùy chọn health).
+- Route cần auth: gửi `Authorization: Bearer <token>`; middleware đã gắn `request.state.user_id`, `user_email`, `user_role`.
+- Response lỗi: dùng HTTPException với status và `detail` rõ ràng (message user-friendly khi có thể).
+
+## Database
+
+- SQLAlchemy 2 style: `Mapped[...]`, `mapped_column`, async engine + async_sessionmaker.
+- Session: dùng `get_db()` dependency; commit trong route hoặc service khi cần, không auto-commit toàn cục.
+- Migration: thêm bảng/cột qua Alembic (`alembic revision`, `alembic upgrade head`), không đổi schema trực tiếp trên production DB.
+
+## Bảo mật
+
+- Mật khẩu: chỉ lưu hash (bcrypt qua passlib).
+- JWT: dùng secret từ config, set expiry (ACCESS_TOKEN_EXPIRE_MINUTES).
+- Không log token hoặc mật khẩu.
+
+## Workflow
+
+Tuân thủ rule **workflow-plan-confirm**: mọi thay đổi backend phải có bước lập kế hoạch và xác nhận với user trước khi implement.

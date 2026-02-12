@@ -1,0 +1,49 @@
+---
+description: Quy ước Auto Test — API tests (pytest) + Frontend E2E (Playwright)
+globs: auto-test/**/*
+alwaysApply: false
+---
+
+# Auto Test Rules
+
+## Cấu trúc thư mục
+
+- `auto-test/` — thư mục gốc automation tests
+  - `api/` — API tests (pytest + httpx)
+    - `conftest.py` — fixtures (base_url, client)
+    - `test_*.py` — test files
+    - `requirements.txt` — pytest, httpx
+  - `frontend/` — E2E tests (Playwright)
+    - `e2e/` — spec files (*.spec.ts)
+    - `playwright.config.ts` — config
+    - `package.json` — @playwright/test
+  - `run-tests.sh` — script chạy api | frontend | all
+  - `README.md` — hướng dẫn
+
+## API tests (pytest)
+
+- Dùng `httpx.Client` cho sync HTTP calls (base_url từ env `API_BASE_URL`, mặc định http://localhost:8001).
+- Fixtures: `base_url`, `client` (httpx.Client).
+- Test endpoint auth: health, register, login, logout, users/me.
+- Test mới đặt trong `api/test_*.py`; dùng `pytest.skip()` nếu phụ thuộc data (ví dụ admin chưa tạo).
+- Chạy: `cd auto-test/api && pip install -r requirements.txt && pytest -v`.
+
+## Frontend E2E tests (Playwright)
+
+- Dùng `@playwright/test`; baseURL từ env `FRONTEND_BASE_URL` (mặc định http://localhost:3008).
+- Spec đặt trong `frontend/e2e/*.spec.ts`.
+- Credentials: env `TEST_ADMIN_EMAIL`, `TEST_ADMIN_PASSWORD` (mặc định admin@example.com / Admin123!).
+- Chạy: `cd auto-test/frontend && npm install && npx playwright test`.
+- Selector ưu tiên: `getByRole`, `getByLabel`, `getByText`; tránh dùng CSS selector dài.
+
+## Chạy tests
+
+- **API**: Backend phải chạy trên port 8001 (`./run.sh backend`).
+- **Frontend E2E**: Backend + Frontend phải chạy (`./run.sh`).
+- **Tất cả**: `./auto-test/run-tests.sh all`.
+
+## Quy ước viết test
+
+- Tên test rõ ràng, mô tả hành vi đang kiểm tra.
+- Không hardcode secret; dùng env hoặc fixture.
+- Test độc lập: không phụ thuộc thứ tự chạy; dùng unique data (uuid) khi cần.

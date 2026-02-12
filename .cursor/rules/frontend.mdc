@@ -1,0 +1,42 @@
+---
+description: Quy ước Frontend — Next.js, React, TypeScript, Tailwind
+globs: frontend/**/*.ts,frontend/**/*.tsx
+alwaysApply: false
+---
+
+# Frontend Rules (Next.js / React / TypeScript)
+
+## Cấu trúc thư mục
+
+- `src/app/` — App Router: pages, layout, middleware
+- `src/api/` — API client (axios instance, endpoints)
+- `src/contexts/` — React context (auth, …)
+- `src/types/` — TypeScript types/interfaces
+- Feature phức tạp: tổ chức theo feature (pages, components, hooks, services, types trong folder feature)
+
+## Components
+
+- Chỉ dùng functional components (arrow function hoặc function declaration).
+- Đặt tên PascalCase; props typings qua interface/type, không dùng `any`.
+- Ưu tiên built-in hooks (useState, useEffect, useMemo, useCallback); custom hook đặt trong `hooks/`, tên bắt đầu bằng `use`.
+- useEffect chỉ dùng cho side effect (subscribe, sync storage), không dùng cho logic nghiệp vụ thuần.
+
+## Styling
+
+- Dùng Tailwind CSS cho mọi style; không thêm custom CSS trừ khi thật sự cần.
+- Thứ tự class: layout → spacing → typography → color (theo quy ước dự án).
+
+## API & Auth
+
+- Gọi API qua `src/api/` (axios instance có baseURL, interceptors).
+- Token: gửi trong header; xử lý 401 (clear storage, redirect login) trong interceptor.
+- Try/catch cho mọi call API; hiển thị message lỗi thân thiện với user.
+
+## Next.js
+
+- App Router: dùng `app/` routes; client component cần state/event thì thêm `"use client"`.
+- Middleware: dùng cho redirect auth (public vs protected routes); không đặt logic nặng.
+
+## Workflow
+
+Tuân thủ rule **workflow-plan-confirm**: mọi thay đổi frontend phải có bước lập kế hoạch và xác nhận với user trước khi implement.

@@ -1,0 +1,25 @@
+---
+description: Quy trình làm việc — lập kế hoạch và xác nhận trước khi thực hiện
+alwaysApply: true
+---
+
+# Quy trình làm việc (Workflow)
+
+## Bắt buộc: Lập kế hoạch và xác nhận trước khi thực hiện
+
+Mọi yêu cầu (feature, sửa lỗi, refactor) đều phải:
+
+1. **Lập kế hoạch (Plan)**  
+   Trước khi sửa code hoặc tạo file mới:
+   - Tóm tắt rõ yêu cầu.
+   - Liệt kê các bước sẽ làm (file/dir cần tạo/sửa, API/thuật toán chính).
+   - Nêu rủi ro hoặc lựa chọn kỹ thuật (nếu có).
+
+2. **Xác nhận (Confirm)**  
+   Trình bày kế hoạch ngắn gọn cho user và **chỉ bắt đầu implement sau khi user đồng ý** (hoặc sau khi đã confirm trong cùng lượt chat).
+
+3. **Thực hiện (Execute)**  
+   Sau khi đã confirm, mới tiến hành viết/thay đổi code theo đúng kế hoạch.
+
+- Không implement trực tiếp khi user đưa yêu cầu mới mà chưa có bước plan + confirm.
+- Nếu yêu cầu rất nhỏ (typo, đổi 1 biến) có thể gộp plan + confirm trong 1–2 câu rồi làm luôn.

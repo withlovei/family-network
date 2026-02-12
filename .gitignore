@@ -1,3 +1,20 @@
+# Python virtual environments
+backend/.venv/
+auto-test/api/.venv/
+
+# Python cache
+**/__pycache__/
+*.py[cod]
+*.pyo
+
+# Node modules and Playwright artifacts for auto-test
+auto-test/**/node_modules/
+auto-test/frontend/test-results/
+auto-test/frontend/playwright-report/
+
+# macOS
+.DS_Store
+
 # OS
 .DS_Store
 Thumbs.db
