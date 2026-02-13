@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
-from app.models.user import User, UserRole
+from app.models.user import User, UserRole, UserStatus
 from app.schemas.user import UserCreate
 
 settings = get_settings()
@@ -57,6 +57,7 @@ async def create_user(db: AsyncSession, data: UserCreate) -> User:
         hashed_password=hash_password(data.password),
         full_name=data.full_name,
         role=UserRole.USER,
+        status=UserStatus.ACTIVE,
     )
     db.add(user)
     await db.flush()
@@ -85,6 +86,7 @@ async def ensure_admin_user(
         hashed_password=hash_password(password),
         full_name=full_name,
         role=UserRole.ADMIN,
+        status=UserStatus.ACTIVE,
     )
     db.add(user)
     await db.flush()
@@ -103,6 +105,7 @@ async def reset_admin_password(
     if user:
         user.hashed_password = hash_password(password)
         user.role = UserRole.ADMIN
+        user.status = UserStatus.ACTIVE
         user.is_active = True
         await db.flush()
         await db.refresh(user)
@@ -112,6 +115,7 @@ async def reset_admin_password(
         hashed_password=hash_password(password),
         full_name=full_name,
         role=UserRole.ADMIN,
+        status=UserStatus.ACTIVE,
         is_active=True,
     )
     db.add(user)

@@ -27,7 +27,7 @@ alwaysApply: false
 
 - Route public: chỉ `/api/auth/login`, `/api/auth/register` (và tùy chọn health).
 - Route cần auth: gửi `Authorization: Bearer <token>`; middleware đã gắn `request.state.user_id`, `user_email`, `user_role`.
-- Response lỗi: dùng HTTPException với status và `detail` rõ ràng (message user-friendly khi có thể).
+- **Response lỗi / message (i18n):** Backend chỉ trả về **mã key**, không trả message đa ngôn ngữ. Body 4xx/5xx là `{"code": "<key>"}`. Dùng constant từ `app/codes.py`; khi raise HTTPException dùng `detail={"code": CODES.XXX}`. Success message (ví dụ logout, link person) cũng trả `{"code": "..."}` để frontend dịch.
 
 ## Database
 

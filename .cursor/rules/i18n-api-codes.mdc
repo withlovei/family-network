@@ -1,0 +1,23 @@
+---
+description: Quy ước API trả key code — backend trả code, frontend dịch (i18n)
+globs: backend/**/*.py,frontend/**/*.ts,frontend/**/*.tsx
+alwaysApply: false
+---
+
+# API Error / Message Codes (i18n)
+
+## Nguyên tắc
+
+- **Backend:** Chỉ trả về **mã key** (string), không trả message đa ngôn ngữ. Frontend sẽ dùng key để hiển thị text theo ngôn ngữ người dùng.
+- **Frontend:** Mọi message lỗi hoặc success từ API đều lấy từ `response.data.code`; map qua i18n (ví dụ `t(code)`) rồi mới hiển thị. Không hiển thị raw key cho user.
+
+## Backend
+
+- 4xx/5xx: body JSON là `{"code": "<key>"}` (ví dụ `auth.invalid_credentials`).
+- Thêm key mới trong `app/codes.py`; dùng constant khi raise HTTPException: `detail={"code": CODES.XXX}`.
+- Middleware và success response (logout, link person, …) cũng dùng `{"code": "..."}` khi cần message cho user.
+
+## Frontend
+
+- Khi bắt lỗi API: đọc `err.response?.data?.code` (hoặc tương đương), gọi `t(code)` để lấy chuỗi đã dịch, rồi hiển thị.
+- Giữ file messages (vi.json, en.json, …) đồng bộ với danh sách key trong `backend/app/codes.py`.

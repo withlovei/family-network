@@ -32,6 +32,16 @@ def test_register(client: httpx.Client) -> None:
     assert "access_token" in data["token"]
 
 
+def test_register_returns_user_with_status(client: httpx.Client) -> None:
+    """POST /api/auth/register returns user with status ACTIVE."""
+    email = f"status-{uuid.uuid4().hex[:8]}@example.com"
+    payload = {"email": email, "full_name": "Status User", "password": "Test123!"}
+    r = client.post("/api/auth/register", json=payload)
+    assert r.status_code == 200
+    data = r.json()
+    assert data["user"].get("status") == "ACTIVE"
+
+
 def test_register_duplicate_email(client: httpx.Client) -> None:
     """POST /api/auth/register with existing email returns 400."""
     email = f"dup-{uuid.uuid4().hex[:8]}@example.com"
@@ -82,7 +92,7 @@ def test_users_me_with_token(client: httpx.Client) -> None:
 
 
 def test_logout_with_token(client: httpx.Client) -> None:
-    """POST /api/auth/logout with token returns success."""
+    """POST /api/auth/logout returns success (code for i18n)."""
     login_payload = {"email": "admin@example.com", "password": "Admin123!"}
     login_r = client.post("/api/auth/login", json=login_payload)
     if login_r.status_code != 200:
@@ -90,4 +100,4 @@ def test_logout_with_token(client: httpx.Client) -> None:
     token = login_r.json()["token"]["access_token"]
     r = client.post("/api/auth/logout", headers={"Authorization": f"Bearer {token}"})
     assert r.status_code == 200
-    assert r.json().get("message") == "Logged out successfully"
+    assert r.json().get("code") == "auth.logged_out"

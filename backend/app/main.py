@@ -1,12 +1,21 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.database import engine, AsyncSessionLocal
 from app.middleware.auth_middleware import AuthMiddleware
-from app.api import auth, users, persons, lineages, marriages, posts, user_person
+from app.api import register_routes
 from app.config import get_settings
 from app.services.auth import ensure_admin_user
+
+
+def _http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
+    """Return error response with only 'code' for frontend i18n."""
+    detail = exc.detail
+    if isinstance(detail, dict) and "code" in detail:
+        return JSONResponse(status_code=exc.status_code, content={"code": detail["code"]})
+    return JSONResponse(status_code=exc.status_code, content={"code": "unknown"})
 
 
 @asynccontextmanager
@@ -34,6 +43,7 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+app.add_exception_handler(HTTPException, _http_exception_handler)
 
 app.add_middleware(AuthMiddleware)
 app.add_middleware(
@@ -43,13 +53,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.include_router(auth.router, prefix="/api")
-app.include_router(users.router, prefix="/api")
-app.include_router(user_person.router, prefix="/api")
-app.include_router(persons.router, prefix="/api")
-app.include_router(lineages.router, prefix="/api")
-app.include_router(marriages.router, prefix="/api")
-app.include_router(posts.router, prefix="/api")
+register_routes(app)
 
 
 @app.get("/health")

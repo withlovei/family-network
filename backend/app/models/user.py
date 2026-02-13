@@ -7,6 +7,12 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
 
 
+class UserStatus(str, enum.Enum):
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
+    LOCKED = "LOCKED"
+
+
 class UserRole(str, enum.Enum):
     USER = "user"
     FAMILY_MANAGER = "family_manager"
@@ -26,7 +32,12 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
+    status: Mapped[UserStatus] = mapped_column(
+        Enum(UserStatus, values_callable=lambda obj: [e.value for e in obj]),
+        default=UserStatus.ACTIVE,
+        nullable=False,
+    )
+    is_active: Mapped[bool] = mapped_column(default=True, nullable=False)  # legacy; prefer status
     role: Mapped[UserRole] = mapped_column(
         Enum(UserRole, values_callable=lambda obj: [e.value for e in obj]),
         default=UserRole.USER,

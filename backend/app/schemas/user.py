@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from app.models.user import UserRole
+from app.models.user import UserRole, UserStatus
 from pydantic import BaseModel, EmailStr
 
 
@@ -20,6 +20,7 @@ class UserLogin(BaseModel):
 
 class UserResponse(UserBase):
     id: uuid.UUID
+    status: UserStatus
     is_active: bool
     role: UserRole
     created_at: datetime

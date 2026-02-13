@@ -31,6 +31,7 @@ alwaysApply: false
 - Gọi API qua `src/api/` (axios instance có baseURL, interceptors).
 - Token: gửi trong header; xử lý 401 (clear storage, redirect login) trong interceptor.
 - Try/catch cho mọi call API; hiển thị message lỗi thân thiện với user.
+- **Đa ngôn ngữ (i18n):** API chỉ trả về key trong `response.data.code`. Frontend **bắt buộc** map key này sang chuỗi đã dịch (ví dụ `t(response.data.code)`). Giữ file dịch (messages) đồng bộ với backend `backend/app/codes.py`; không hiển thị raw `code` cho user.
 
 ## Next.js
 
