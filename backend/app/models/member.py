@@ -19,6 +19,13 @@ class MemberStatus(str, enum.Enum):
     REMOVED = "REMOVED"
 
 
+class MemberFamilyRole(str, enum.Enum):
+    HUSBAND = "HUSBAND"
+    WIFE = "WIFE"
+    CHILD = "CHILD"
+    OTHER = "OTHER"
+
+
 class Member(Base):
     __tablename__ = "members"
 
@@ -36,6 +43,11 @@ class Member(Base):
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
     gender: Mapped[MemberGender] = mapped_column(
         Enum(MemberGender, values_callable=lambda obj: [e.value for e in obj]),
+        nullable=False,
+    )
+    family_role: Mapped[MemberFamilyRole] = mapped_column(
+        Enum(MemberFamilyRole, values_callable=lambda obj: [e.value for e in obj]),
+        default=MemberFamilyRole.CHILD,
         nullable=False,
     )
     date_of_birth: Mapped[date | None] = mapped_column(Date, nullable=True)

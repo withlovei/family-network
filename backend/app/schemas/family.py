@@ -8,6 +8,7 @@ from app.models.family_network import FamilyStatus
 class FamilyBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
     description: str | None = None
+    address: str | None = None
 
 
 class FamilyCreate(FamilyBase):
@@ -17,6 +18,7 @@ class FamilyCreate(FamilyBase):
 class FamilyUpdate(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=255)
     description: str | None = None
+    address: str | None = None
     status: FamilyStatus | None = None
 
 

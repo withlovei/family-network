@@ -9,7 +9,7 @@ from app.models.family_network import (
     NetworkUserRole,
     NetworkRole,
 )
-from app.models.member import Member, MemberStatus
+from app.models.member import Member, MemberStatus, MemberFamilyRole, MemberGender
 from app.models.marriage import Marriage, MarriageStatus
 from app.schemas.marriage import MarriageCreate, MarriageUpdate, NewFamilyWithMarriageCreate
 from app.services.network import get_user_role_in_network
@@ -72,10 +72,18 @@ async def create_new_family_with_marriage(
     db.add(new_family)
     await db.flush()
 
+    # Determine spouse family_role based on gender
+    spouse_role = MemberFamilyRole.OTHER
+    if data.spouse.gender == MemberGender.MALE:
+        spouse_role = MemberFamilyRole.HUSBAND
+    elif data.spouse.gender == MemberGender.FEMALE:
+        spouse_role = MemberFamilyRole.WIFE
+
     spouse = Member(
         family_id=new_family.id,
         full_name=data.spouse.full_name,
         gender=data.spouse.gender,
+        family_role=spouse_role,
         date_of_birth=data.spouse.date_of_birth,
         is_alive=data.spouse.is_alive,
         status=MemberStatus.ACTIVE,
@@ -83,6 +91,9 @@ async def create_new_family_with_marriage(
     db.add(spouse)
     await db.flush()
 
+    # Update child member's family_role to CHILD if not already set
+    if member.family_role != MemberFamilyRole.CHILD:
+        member.family_role = MemberFamilyRole.CHILD
     member.family_id = new_family.id
     await db.flush()
 

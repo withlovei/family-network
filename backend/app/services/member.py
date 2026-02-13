@@ -8,7 +8,7 @@ from app.models.family_network import (
     NetworkRole,
     NetworkUserRoleStatus,
 )
-from app.models.member import Member, MemberGender, MemberStatus
+from app.models.member import Member, MemberGender, MemberStatus, MemberFamilyRole
 from app.schemas.member import MemberCreate, MemberUpdate
 from app.services.network import get_user_role_in_network
 
@@ -39,6 +39,7 @@ async def create_member(
         family_id=family_id,
         full_name=data.full_name,
         gender=data.gender,
+        family_role=data.family_role,
         date_of_birth=data.date_of_birth,
         is_alive=data.is_alive,
         status=MemberStatus.ACTIVE,
@@ -124,6 +125,8 @@ async def update_member(
         member.full_name = data.full_name
     if data.gender is not None:
         member.gender = data.gender
+    if data.family_role is not None:
+        member.family_role = data.family_role
     if data.date_of_birth is not None:
         member.date_of_birth = data.date_of_birth
     if data.is_alive is not None:

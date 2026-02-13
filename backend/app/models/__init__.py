@@ -8,7 +8,7 @@ from app.models.family_network import (
     NetworkRole,
     NetworkUserRoleStatus,
 )
-from app.models.member import Member, MemberGender, MemberStatus
+from app.models.member import Member, MemberGender, MemberStatus, MemberFamilyRole
 from app.models.marriage import Marriage, MarriageStatus
 
 __all__ = [
@@ -25,6 +25,7 @@ __all__ = [
     "Member",
     "MemberGender",
     "MemberStatus",
+    "MemberFamilyRole",
     "Marriage",
     "MarriageStatus",
 ]

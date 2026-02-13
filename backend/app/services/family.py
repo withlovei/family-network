@@ -35,6 +35,7 @@ async def create_family(
         network_id=network_id,
         name=data.name,
         description=data.description,
+        address=data.address,
         created_by=user_id,
         status=FamilyStatus.ACTIVE,
     )
@@ -89,6 +90,8 @@ async def update_family(
         family.name = data.name
     if data.description is not None:
         family.description = data.description
+    if data.address is not None:
+        family.address = data.address
     if data.status is not None:
         family.status = data.status
     await db.flush()
